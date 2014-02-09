@@ -1,10 +1,8 @@
-{spawn} = require 'child_process'
 color = require 'colors'
 _ = require 'underscore'
 _.str = require 'underscore.string'
 
-
-class RecordedProcess
+exports.RecordedProcess = class RecordedProcess
 	constructor: (@proc) ->
 		@ipc_history = []
 
@@ -42,7 +40,7 @@ Concerns:
 	-throw for now
 ###
 
-class GDB extends RecordedProcess
+exports.GDB = class GDB extends RecordedProcess
 	# debugged_program :: RecordedProcess, *NOT* process
 
 	constructor: (@proc, @debugged_program, ready_handler) ->
@@ -95,33 +93,4 @@ class GDB extends RecordedProcess
 
 	continueExecution: (callback) ->
 		@command 'c', callback
-
-
-spawnKernel = (callback) ->
-	kernel_proc = spawn('sys161', ['-w', 'kernel'], {cwd: '/home/jharvard/cs161/root'})
-	kernel = new RecordedProcess(kernel_proc)
-
-	check_if_waiting_for_debugger = ->
-		stderr = kernel.ipcHistoryOn('stderr')
-		waiting_signal = '\nsys161: Waiting for debugger connection...\n'
-		if _.str.contains(stderr, waiting_signal)
-			# stop listening
-			kernel_proc.stderr.removeListener 'data', check_if_waiting_for_debugger
-
-			# return the kernel proc
-			callback(kernel)
-
-	kernel_proc.stderr.on 'data', check_if_waiting_for_debugger
-
-spawnGDB = (callback) ->
-	spawnKernel (kernel) ->
-		gdb_proc = spawn('os161-gdb', ['kernel'], {cwd: '/home/jharvard/cs161/root'})
-		gdb = new GDB(gdb_proc, kernel, -> callback(gdb))
-
-spawnGDB (gdb) ->
-	gdb.setBreakpoint 'menu_execute', ->
-		gdb.continueExecution ->
-			gdb.getBacktrace (backtrace) ->
-				console.log backtrace
-				process.exit()
 
