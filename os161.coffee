@@ -4,9 +4,9 @@ _ = require 'underscore'
 _.str = require 'underscore.string'
 path = require 'path'
 
-compile_root = '/home/jharvard/cs161/os161/kern/compile/ASST0'
-kernel_root = '/home/jharvard/cs161/root'
-source_root = '/home/jharvard/cs161/os161'
+exports.compile_root = compile_root = '/home/jharvard/cs161/os161/kern/compile/ASST0'
+exports.kernel_root = kernel_root = '/home/jharvard/cs161/root'
+exports.source_root = source_root = '/home/jharvard/cs161/os161'
 
 rebase_path = (compile_relative_path) ->
 	return path.relative(
@@ -45,16 +45,4 @@ spawnGDB = (callback) ->
 		gdb_proc = spawn('os161-gdb', ['kernel'], {cwd: kernel_root})
 		gdb = new OS161_GDB(gdb_proc, kernel, -> callback(gdb))
 
-module.exports = spawnGDB
-
-if require.main == module
-	spawnGDB (gdb) ->
-		gdb.setBreakpoint 'menu_execute', ->
-			gdb.continueExecution ->
-				gdb.getStack (stack) ->
-					console.log JSON.stringify(stack, null, '  ')
-					#gdb.print_ipc_history()
-					process.exit()
-
-
-
+exports.launch_gdb = spawnGDB

@@ -4,9 +4,11 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 
-launch_gdb = require './os161-gdbcontroller.coffee'
+os161 = require './os161.coffee'
 gdb = null
-launch_gdb (_gdb) ->
+
+# wait until gdb is ready before opening to http requests
+os161.launch_gdb (_gdb) ->
 	gdb = _gdb
 	app.listen(3000)
 	console.log "listening on port 3000"
