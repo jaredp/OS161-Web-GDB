@@ -86,7 +86,15 @@ exports.GDB = class GDB extends RecordedProcess
 		@send(code + '\n')
 
 	getBacktrace: (callback) ->
-		@command 'bt', callback
+		@command 'bt', (backtrace) ->
+			frames = []
+			for line in backtrace.trim().split('\n')
+				match = line.match(/^#(\d+)\s+(?:(.+) in )?(.+) \((.*)\) at (.+):(\d+)$/)
+				if match?
+					[line, frame, hex_loc, func, args, file, line] = match
+					frames.push {frame, hex_loc, func, args, file, line}
+			callback(frames)
+
 
 	setBreakpoint: (location, callback) ->
 		@command "b #{location}", callback
