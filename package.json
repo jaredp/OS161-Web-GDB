@@ -9,7 +9,11 @@
     "underscore": "~1.5.2",
     "underscore.string": "~2.3.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-express-server": "*"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/jaredp/OS161-Web-GDB.git"
