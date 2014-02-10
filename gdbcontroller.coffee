@@ -1,4 +1,3 @@
-color = require 'colors'
 _ = require 'underscore'
 _.str = require 'underscore.string'
 async = require 'async'

@@ -1,0 +1,22 @@
+{
+  "name": "OS161-Web-GDB",
+  "version": "0.0.0",
+  "description": "For debugging OS161 with a GUI in a browser",
+  "main": "server.coffee",
+  "dependencies": {
+    "async": "~0.2.10",
+    "express": "~3.4.8",
+    "underscore": "~1.5.2",
+    "underscore.string": "~2.3.3"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaredp/OS161-Web-GDB.git"
+  },
+  "author": "Jared Pochtar",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/jaredp/OS161-Web-GDB/issues"
+  }
+}
