@@ -27,8 +27,9 @@ spawnGDB = (callback) ->
 spawnGDB (gdb) ->
 	gdb.setBreakpoint 'menu_execute', ->
 		gdb.continueExecution ->
-			gdb.getBacktrace (backtrace) ->
-				console.log backtrace
+			gdb.getStack (stack) ->
+				console.log JSON.stringify(stack, null, '  ')
+				#gdb.print_ipc_history()
 				process.exit()
 
 

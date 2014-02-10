@@ -1,11 +1,13 @@
 color = require 'colors'
 _ = require 'underscore'
 _.str = require 'underscore.string'
+async = require 'async'
 
 exports.RecordedProcess = class RecordedProcess
 	constructor: (@proc) ->
 		@ipc_history = []
 
+		# FIXME: stderr sometimes appears out of order
 		@proc.stdout.on 'data', (data) => @add_to_rpc_history('stdout', data.toString())
 		@proc.stderr.on 'data', (data) => @add_to_rpc_history('stderr', data.toString())
 
@@ -91,10 +93,39 @@ exports.GDB = class GDB extends RecordedProcess
 			for line in backtrace.trim().split('\n')
 				match = line.match(/^#(\d+)\s+(?:(.+) in )?(.+) \((.*)\) at (.+):(\d+)$/)
 				if match?
-					[line, frame, hex_loc, func, args, file, line] = match
-					frames.push {frame, hex_loc, func, args, file, line}
+					[input, frame, hex_loc, func, args, file, line] = match
+					frames.push {
+						frame: Number(frame),
+						hex_loc, func, args,
+						file, line
+					}
 			callback(frames)
 
+	getLocalsInCurrentFrame: (callback) ->
+		@command 'info locals', (locals) =>
+			vars = []
+			for line in locals.trim().split('\n')
+				match = line.match(/^(.+) = (.+)$/)
+				if match?
+					[input, variable, value] = match
+					vars.push {variable, value}
+			callback(vars)
+
+	setFrame: (frame, callback) ->
+		@command "f #{frame}", callback
+
+	getLocals: (frame, callback) ->
+		@setFrame frame, => @getLocalsInCurrentFrame callback
+
+	getStack: (callback) ->
+		@getBacktrace (backtrace) =>
+			async.eachSeries(backtrace, ((traceframe, finished) =>
+				@getLocals traceframe.frame, (locals) =>
+					traceframe.locals = locals
+					finished()
+			), (->
+				callback(backtrace)
+			))
 
 	setBreakpoint: (location, callback) ->
 		@command "b #{location}", callback
