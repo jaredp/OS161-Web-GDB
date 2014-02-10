@@ -17,6 +17,13 @@ rebase_path = (compile_relative_path) ->
 		)
 	)
 
+class OS161_GDB extends GDB
+	getBacktrace: (callback) ->
+		super (frames) ->
+			for frame in frames
+				frame.file = rebase_path(frame.file)
+			callback(frames)
+
 spawnKernel = (callback) ->
 	kernel_proc = spawn('sys161', ['-w', 'kernel'], {cwd: kernel_root})
 	kernel = new RecordedProcess(kernel_proc)
@@ -36,7 +43,7 @@ spawnKernel = (callback) ->
 spawnGDB = (callback) ->
 	spawnKernel (kernel) ->
 		gdb_proc = spawn('os161-gdb', ['kernel'], {cwd: kernel_root})
-		gdb = new GDB(gdb_proc, kernel, -> callback(gdb))
+		gdb = new OS161_GDB(gdb_proc, kernel, -> callback(gdb))
 
 module.exports = spawnGDB
 
@@ -45,8 +52,6 @@ if require.main == module
 		gdb.setBreakpoint 'menu_execute', ->
 			gdb.continueExecution ->
 				gdb.getStack (stack) ->
-					for frame in stack
-						frame.file = rebase_path(frame.file)
 					console.log JSON.stringify(stack, null, '  ')
 					#gdb.print_ipc_history()
 					process.exit()
