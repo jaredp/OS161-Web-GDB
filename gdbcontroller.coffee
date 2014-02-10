@@ -17,13 +17,6 @@ exports.RecordedProcess = class RecordedProcess
 
 	add_to_rpc_history: (from, data) ->
 		@ipc_history.push {data, from}
-		#@print_ipc_history()
-
-	print_ipc_history: ->
-		console.log "ipc history:"
-		for {data, from} in @ipc_history
-			color = {stdout: 'white', stderr: 'red', stdin: 'blue'}[from]
-			process.stdout.write data[color]
 
 	ipcHistoryOn: (chann)->
 		(log.data for log in @ipc_history when log.from == chann).join()
