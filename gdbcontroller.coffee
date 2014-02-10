@@ -6,7 +6,6 @@ exports.RecordedProcess = class RecordedProcess
 	constructor: (@proc) ->
 		@ipc_history = []
 
-		# FIXME: stderr sometimes appears out of order
 		@proc.stdout.on 'data', (data) => @add_to_rpc_history('stdout', data.toString())
 		@proc.stderr.on 'data', (data) => @add_to_rpc_history('stderr', data.toString())
 
@@ -41,14 +40,8 @@ exports.GDB = class GDB extends RecordedProcess
 		super(@proc)
 
 		@output_buffer = ''
-		#TODO: error buffer from stderr
 		@next_handler = null
 
-		#TODO: can't rely on newline, so we should change the prompt
-		# to something reasonably unique
-		# however, we then have to possibly strip a newline from the output
-		# It's possible the newline is only omited if we ended stderr with a
-		# newline.
 		@gdb_prompt = '(gdb) '
 
 		@proc.stdout.on 'data', (data) =>
