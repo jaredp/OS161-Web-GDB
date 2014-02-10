@@ -76,17 +76,24 @@ exports.GDB = class GDB extends RecordedProcess
 					# call the handler
 					handler(results)
 
-		@next_handler = =>	# wait until prompt
-			@command 'set height 100000', =>
-				@command 'set width 100000', =>
-					@command 'set pagination off', =>
-						ready_handler()
+		@next_handler = => # wait until prompt
+			@initialize =>
+				ready_handler()
+
+	initialize: (callback) ->
+		@command 'set height 100000', =>
+			@command 'set width 100000', =>
+				@command 'set pagination off', =>
+					callback()
 
 	command: (code, callback) ->
 		throw new Error "gdb is in the middle of another command" if @next_handler
 		@next_handler = callback
 		@send(code + '\n')
 
+	####
+	# Stack inspection
+	##
 	getBacktrace: (callback) ->
 		@command 'bt', (backtrace) ->
 			frames = []
@@ -97,7 +104,7 @@ exports.GDB = class GDB extends RecordedProcess
 					frames.push {
 						frame: Number(frame),
 						hex_loc, func, args,
-						file, line
+						file, line: Number(line)
 					}
 			callback(frames)
 
@@ -127,6 +134,9 @@ exports.GDB = class GDB extends RecordedProcess
 				callback(backtrace)
 			))
 
+	####
+	# Control handling
+	##
 	setBreakpoint: (location, callback) ->
 		@command "b #{location}", callback
 
