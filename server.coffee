@@ -13,6 +13,10 @@ os161.launch_gdb (_gdb) ->
 	app.listen(3000)
 	console.log "listening on port 3000"
 
+## Expose source code
+# this may be the beginning of something much greater...
+app.use('/source', express.static(os161.source_root))
+
 ## Inspect program
 app.get '/backtrace', (req, res) ->
 	gdb.getStack (stack) ->
