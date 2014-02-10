@@ -135,11 +135,28 @@ exports.GDB = class GDB extends RecordedProcess
 			))
 
 	####
-	# Control handling
+	# Manage breakpoints
 	##
 	setBreakpoint: (location, callback) ->
 		@command "b #{location}", callback
 
+	getBreakpoints: (callback) ->
+		# TODO: parse me
+		@command "info break", callback
+
+
+	####
+	# Control handling
+	##
 	continueExecution: (callback) ->
 		@command 'c', callback
+
+	stepIntoLine: (callback) ->
+		@command 's', callback
+
+	runNextLine: (callback) ->
+		@command 'n', callback
+
+	finishFunction: (callback) ->
+		@command 'finish', callback
 
