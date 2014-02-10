@@ -38,15 +38,18 @@ spawnGDB = (callback) ->
 		gdb_proc = spawn('os161-gdb', ['kernel'], {cwd: kernel_root})
 		gdb = new GDB(gdb_proc, kernel, -> callback(gdb))
 
-spawnGDB (gdb) ->
-	gdb.setBreakpoint 'menu_execute', ->
-		gdb.continueExecution ->
-			gdb.getStack (stack) ->
-				for frame in stack
-					frame.file = rebase_path(frame.file)
-				console.log JSON.stringify(stack, null, '  ')
-				#gdb.print_ipc_history()
-				process.exit()
+module.exports = spawnGDB
+
+if require.main == module
+	spawnGDB (gdb) ->
+		gdb.setBreakpoint 'menu_execute', ->
+			gdb.continueExecution ->
+				gdb.getStack (stack) ->
+					for frame in stack
+						frame.file = rebase_path(frame.file)
+					console.log JSON.stringify(stack, null, '  ')
+					#gdb.print_ipc_history()
+					process.exit()
 
 
 
