@@ -127,6 +127,15 @@ exports.GDB = class GDB extends RecordedProcess
 				callback(backtrace)
 			))
 
+	getProgramState: (callback) ->
+		@getStack (stack) =>
+			@getBreakpoints (breakpoints) =>
+				callback {
+					stack, breakpoints,
+					gdb_history: @ipc_history,
+					proc_history: @debugged_program.ipc_history
+				}
+
 	####
 	# Manage breakpoints
 	##
