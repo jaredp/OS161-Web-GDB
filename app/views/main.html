@@ -1,19 +1,16 @@
 <div class="header">
   <ul class="nav nav-pills pull-right">
-    <li class="active"><a ng-href="#">Home</a></li>
-    <li><a ng-href="#">About</a></li>
-    <li><a ng-href="#">Contact</a></li>
+    <li><a ng-href="#" ng-click="add_breakpoint()">Add Breakpoint</a></li>
+    <li><a ng-href="#" ng-click="continue_execution()">Continue</a></li>
+    <li><a ng-href="#" ng-click="run_next_line()">Next</a></li>
   </ul>
   <h3 class="text-muted">client</h3>
 </div>
 
 <div class="jumbotron">
-  <h1>'Allo, 'Allo!</h1>
-  <p class="lead">
-    <img src="images/yeoman.png" alt="I'm Yeoman"><br>
-    Always a pleasure scaffolding your apps.
-  </p>
-  <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
+  <code>
+    {{ app_state }}
+  </code>
 </div>
 
 <div class="row marketing">
