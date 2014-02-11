@@ -71,10 +71,13 @@ exports.GDB = class GDB extends RecordedProcess
 				@command 'set pagination off', =>
 					callback()
 
+	is_busy: -> @next_handler?
+
 	command: (code, callback) ->
-		throw new Error "gdb is in the middle of another command" if @next_handler
+		throw new Error "gdb is in the middle of another command" if @is_busy()
 		@next_handler = callback
 		@send(code + '\n')
+
 
 	####
 	# Stack inspection
