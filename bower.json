@@ -1,0 +1,23 @@
+{
+  "name": "OS161-Web-GDB",
+  "version": "0.0.0",
+  "homepage": "https://github.com/jaredp/OS161-Web-GDB",
+  "authors": [
+    "Jared Pochtar <jpochtar@gmail.com>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "app/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.12",
+    "angular-route": "~1.2.12",
+    "bootstrap": "~3.1.0"
+  }
+}
