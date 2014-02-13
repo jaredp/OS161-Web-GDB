@@ -7,27 +7,22 @@
   <h3 class="text-muted">client</h3>
 </div>
 
-<div class="jumbotron">
-  <code>
-    {{ app_state }}
-  </code>
+<div ng-repeat="stack_frame in app_state.stack">
+  <h4><strong>#{{stack_frame.frame}}</strong> in {{stack_frame.file}}, {{stack_frame.func}}:{{stack_frame.line}}</h4>
+
+  <table class="table table-striped">
+    <tr ng-repeat="local in stack_frame.locals">
+      <td>{{local.variable}}</td>
+      <td>{{local.value}}</td>
+    </tr>
+  </table>
 </div>
 
-<div class="row marketing">
-  <h4>HTML5 Boilerplate</h4>
-  <p>
-    HTML5 Boilerplate is a professional front-end template for building fast, robust, and adaptable web apps or sites.
-  </p>
+<h3>Breakpoints</h3>
+<pre>{{app_state.breakpoints}}</pre>
 
-  <h4>Angular</h4>
-  <p>
-    AngularJS is a toolset for building the framework most suited to your application development.
-  </p>
+<h3>GDB Log</h3>
+<pre>{{app_state.gdb_history}}</pre>
 
-  <h4>Karma</h4>
-  <p>Spectacular Test Runner for JavaScript.</p>
-</div>
-
-<div class="footer">
-  <p>♥ from the Yeoman team</p>
-</div>
+<h3>Proc Log</h3>
+<pre>{{app_state.proc_history}}</pre>

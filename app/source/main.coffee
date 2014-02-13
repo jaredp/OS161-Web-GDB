@@ -3,8 +3,11 @@
 angular.module('gdbGuiApp')
   .controller 'MainCtrl', ($scope, $http) ->
   	$scope.refresh = ->
-	  	$http({url: '/proc_state', method: 'GET'}).success (data) ->
-	  		$scope.app_state = JSON.stringify(data, null, '\t')
+  		$http({url: '/proc_state', method: 'GET'}).success (data) ->
+  			$scope.app_state = data
+
+  	$scope.state_json = ->
+  		JSON.stringify($scope.app_state, null, '\t')
 
   	$scope.add_breakpoint = ->
   		$http({
