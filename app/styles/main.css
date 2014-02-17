@@ -11,3 +11,7 @@ code {
 .pipe-stdin {
 	color: blue;
 }
+
+.pipe-stderr {
+	color: red;
+}
