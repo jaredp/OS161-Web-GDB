@@ -1,34 +1,50 @@
-<div class="header">
-  <ul class="nav nav-pills pull-right">
-    <li><a ng-click="add_breakpoint()">Add Breakpoint</a></li>
+<div class="container">
+  <div class="header">
+    <ul class="nav nav-pills pull-right">
+      <li><a ng-click="add_breakpoint()">Add Breakpoint</a></li>
 
-    <li><a ng-click="http_post('/continue')">Continue</a></li>
-    <li><a ng-click="http_post('/step')">Into</a></li>
-    <li><a ng-click="http_post('/next')">Next</a></li>
-    <li><a ng-click="http_post('/finish')">Finish</a></li>
-  </ul>
-  <h3 class="text-muted" id="title">OS 161</h3>
-</div>
-
-<div ng-repeat="stack_frame in app_state.stack">
-  <div>
-    <strong>{{stack_frame.func}}</strong>
-    at {{stack_frame.file}}:{{stack_frame.line}}
+      <li><a ng-click="http_post('/continue')">Continue</a></li>
+      <li><a ng-click="http_post('/step')">Into</a></li>
+      <li><a ng-click="http_post('/next')">Next</a></li>
+      <li><a ng-click="http_post('/finish')">Finish</a></li>
+    </ul>
+    <h3 class="text-muted" id="title">OS 161</h3>
   </div>
-  <table class="table table-striped">
-    <tr ng-repeat="local in stack_frame.locals">
-      <td>{{local.variable}}</td>
-      <td>{{local.value}}</td>
-    </tr>
-  </table>
-  <hr />
 </div>
 
-<h3>Breakpoints</h3>
-<pre>{{app_state.breakpoints}}</pre>
+<div class="source-inspector">
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam in aliquet eros, id tincidunt leo. Nullam lectus lectus, sollicitudin a rhoncus iaculis, porttitor at risus. Nulla dolor lacus, aliquet nec consequat non, ullamcorper vitae urna. Donec sed neque mi. Curabitur nec interdum libero. Nullam at vestibulum lacus. Curabitur pellentesque urna eget magna dictum, sed dapibus lectus mollis. Maecenas vulputate et justo ut bibendum. Nunc eu mi bibendum, eleifend lorem quis, venenatis sem. Sed nisl nisl, rutrum et tempus sit amet, dignissim a dui. Cras luctus varius imperdiet. Fusce eget diam in lacus posuere pharetra. Sed interdum tellus eget arcu mattis hendrerit. Cras semper sodales lectus, id bibendum purus adipiscing nec.
 
-<h3>Process Log</h3>
-<console log="app_state.proc_history"></console>
+  Nam ultrices ornare iaculis. Praesent erat lectus, vestibulum id elit a, accumsan ultricies magna. Donec mattis ullamcorper congue. Fusce vestibulum vestibulum magna sit amet euismod. Suspendisse luctus commodo semper. Donec porttitor pretium ante eget sollicitudin. Etiam quis metus dui.
 
-<h3>GDB Log</h3>
-<console log="app_state.gdb_history"></console>
+  Nunc a felis velit. Nulla rutrum diam non sapien ornare tempor eu posuere diam. Sed sagittis tempus lectus et viverra. Aliquam eget imperdiet odio. Duis scelerisque molestie ipsum. Fusce ut malesuada mauris, eget ultricies tellus. Suspendisse vel erat justo. Nullam volutpat dolor id justo malesuada, consectetur porta lorem pretium. Mauris purus velit, pretium ut nibh non, tincidunt aliquet tortor. Praesent porttitor vel odio ac gravida. Duis nec neque at tortor aliquam suscipit. Praesent enim enim, posuere rutrum urna vel, molestie ultricies lacus. In non libero pretium, aliquam tellus in, lobortis lectus.
+
+  Curabitur sagittis vulputate eros in sagittis. Nunc in metus sollicitudin, lacinia dui et, aliquet ipsum. Pellentesque ac suscipit quam. Vivamus ut elit nec erat porttitor iaculis eu non felis. Quisque gravida ligula vitae tempus cursus. In at posuere nibh. Nulla pretium orci et elit dignissim fringilla. Praesent vehicula dictum dolor et tincidunt.
+
+  Maecenas eget ligula fringilla, consectetur nisl egestas, laoreet odio. Cras nec nibh dictum, laoreet tortor quis, cursus nibh. Mauris in mi massa. Praesent porttitor commodo nunc varius iaculis. Mauris dictum mattis risus, at viverra tellus porta tristique. Morbi vulputate, nulla consequat ultricies porttitor, metus arcu molestie est, eu tempus arcu sapien sodales quam. Duis eu ornare mi, ac sollicitudin nunc. Aliquam a viverra mi, fermentum consequat nibh. Sed pretium, libero eu egestas placerat, sem odio sodales risus, nec varius magna neque vitae erat.
+</div>
+
+<div class="infopane">
+  <div ng-repeat="stack_frame in app_state.stack">
+    <div>
+      <strong>{{stack_frame.func}}</strong>
+      at {{stack_frame.file}}:{{stack_frame.line}}
+    </div>
+    <table class="table table-striped">
+      <tr ng-repeat="local in stack_frame.locals">
+        <td>{{local.variable}}</td>
+        <td>{{local.value}}</td>
+      </tr>
+    </table>
+    <hr />
+  </div>
+
+  <h3>Breakpoints</h3>
+  <pre>{{app_state.breakpoints}}</pre>
+
+  <h3>Process Log</h3>
+  <console log="app_state.proc_history"></console>
+
+  <h3>GDB Log</h3>
+  <console log="app_state.gdb_history"></console>
+</div>

@@ -1,11 +1,48 @@
 
-code {
-	white-space: pre;
-}
-
 #title {
 	padding-top: 7px;
 	margin-bottom: 1em;
+}
+
+.content-wrapper {
+	position: absolute;
+	top: 5em;	/* some room for header*/
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.infopane {
+	position: absolute;
+	top: 5em;	/* some room for header*/
+	bottom: 0;
+	width: 400px;
+	right: 0;
+
+	overflow-y: scroll;
+	overflow-x: hidden;
+
+	padding-right: 1em;
+	padding-left: 1em;
+}
+
+.source-inspector {
+	position: absolute;
+	top: 5em;	/* some room for header*/
+	bottom: 0;
+	left: 0;
+	right: 400px;
+
+	overflow-y: scroll;
+
+	padding-right: 1em;
+	padding-left: 1em;
+}
+
+/* console */
+
+code {
+	white-space: pre;
 }
 
 .pipe-stdin {
