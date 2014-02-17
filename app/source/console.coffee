@@ -3,7 +3,7 @@
 angular.module('gdbGuiApp')
   .directive 'console', -> {
     template: '''<div>
-    	<pre><span
+    	<pre class="console"><span
     		ng-repeat="line in log"
     		class="pipe-{{line.from}}"
     		>{{line.data}}</pre>
