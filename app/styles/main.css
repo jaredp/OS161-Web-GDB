@@ -2,3 +2,8 @@
 code {
 	white-space: pre;
 }
+
+#title {
+	padding-top: 7px;
+	margin-bottom: 1em;
+}

@@ -7,18 +7,21 @@
     <li><a ng-click="http_post('/next')">Next</a></li>
     <li><a ng-click="http_post('/finish')">Finish</a></li>
   </ul>
-  <h3 class="text-muted">OS 161</h3>
+  <h3 class="text-muted" id="title">OS 161</h3>
 </div>
 
 <div ng-repeat="stack_frame in app_state.stack">
-  <h4><strong>#{{stack_frame.frame}}</strong> in {{stack_frame.file}}, {{stack_frame.func}}:{{stack_frame.line}}</h4>
-
+  <div>
+    <strong>{{stack_frame.func}}</strong>
+    at {{stack_frame.file}}:{{stack_frame.line}}
+  </div>
   <table class="table table-striped">
     <tr ng-repeat="local in stack_frame.locals">
       <td>{{local.variable}}</td>
       <td>{{local.value}}</td>
     </tr>
   </table>
+  <hr />
 </div>
 
 <h3>Breakpoints</h3>
