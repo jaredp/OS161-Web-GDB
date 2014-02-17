@@ -2,32 +2,14 @@
 
 angular.module('gdbGuiApp')
   .controller 'MainCtrl', ($scope, $http) ->
-    $scope.refresh = ->
-      $http({url: '/proc_state', method: 'GET'}).success (data) ->
+    socket = io.connect('/', {reconnect: true})
+    socket.on 'app_state_change', (data) -> $scope.$apply ->
         $scope.app_state = data
 
-    $scope.state_json = ->
-      JSON.stringify($scope.app_state, null, '\t')
+    $scope.http_post = (url, data = {}) ->
+      $http({url, data, method: 'POST'})
 
     $scope.add_breakpoint = ->
-      $http({
-        url: '/add_breakpoint'
-        method: 'POST'
-        data: {"breakpoint": "menu_execute"}
-      }).success -> $scope.refresh()
-
-    $scope.continue_execution = ->
-      $http({
-        url: '/continue'
-        method: 'POST'
-        data: {}
-      }).success -> $scope.refresh()
-
-    $scope.run_next_line = ->
-      $http({
-        url: '/next'
-        method: 'POST'
-        data: {}
-      }).success -> $scope.refresh()
-
-    $scope.refresh()
+      $scope.http_post('/add_breakpoint', {
+        "breakpoint": "menu_execute"
+      })

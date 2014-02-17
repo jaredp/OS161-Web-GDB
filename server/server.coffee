@@ -4,14 +4,21 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.static(__dirname + '/../app'))
+server = require('http').createServer(app)
+io = require('socket.io').listen(server)
+io.set 'log level', 0
 
 os161 = require './os161.coffee'
-gdb = null
 
+gdb = null
 program_state = {}
+
+io.sockets.on 'connection', (socket) ->
+  socket.emit('app_state_change', program_state)
+
 set_program_state = (state) ->
   program_state = state
-  # we should also notify over websockets...
+  io.sockets.emit('app_state_change', program_state)
 
 update_program_state = (continuation) ->
   gdb.getProgramState (state) ->
@@ -22,7 +29,7 @@ update_program_state = (continuation) ->
 os161.launch_gdb (_gdb) ->
   gdb = _gdb
   update_program_state ->
-    app.listen(3000)
+    server.listen(3000)
     console.log "listening on port 3000"
 
 ## Serialize gdb interactions
