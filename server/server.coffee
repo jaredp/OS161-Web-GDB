@@ -92,6 +92,15 @@ expose_gdb '/finish', (cb) ->
   gdb.finishFunction(cb)
 
 
+## Interact with processes
+expose_gdb '/gdb_command', (cb, {command}) ->
+  gdb.command(command.trim(), cb)
+
+expose_gdb '/proc_input', (cb, {input}) ->
+  gdb.debugged_program.send(input)
+  cb()
+
+
 ## Expose source code
 # this may be the beginning of something much greater...
 app.use('/source', express.static(os161.source_root))
