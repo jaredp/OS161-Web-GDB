@@ -8,10 +8,12 @@ server = require('http').createServer(app)
 io = require('socket.io').listen(server)
 io.set 'log level', 0
 
-os161 = require './os161.coffee'
 
-gdb = null
+## Expose program information
 program_state = {}
+
+app.get '/proc_state', (req, res) ->
+  res.send(program_state)
 
 io.sockets.on 'connection', (socket) ->
   socket.emit('app_state_change', program_state)
@@ -19,6 +21,11 @@ io.sockets.on 'connection', (socket) ->
 set_program_state = (state) ->
   program_state = state
   io.sockets.emit('app_state_change', program_state)
+
+
+## Manage gdb
+os161 = require './os161.coffee'
+gdb = null
 
 update_program_state = (continuation) ->
   gdb.getProgramState (state) ->
@@ -58,45 +65,33 @@ execute_gdb_interaction = (interaction, callback) ->
     update_program_state ->
       callback()
 
-## Expose source code
-# this may be the beginning of something much greater...
-app.use('/source', express.static(os161.source_root))
-
-
-## Inspect program
-app.get '/proc_state', (req, res) ->
-  res.send(program_state)
+expose_gdb = (url, interaction) ->
+  app.post url, (req, res) ->
+    gdb_interaction(
+      (cb) -> interaction(cb, req.body),
+      (-> res.send(true))
+    )
 
 
 ## Mangage breakpoints
-app.post '/add_breakpoint', (req, res) ->
-  gdb_interaction(
-    ((c)-> gdb.setBreakpoint(req.body.breakpoint, c)),
-    (-> res.send(true))
-  )
+expose_gdb '/add_breakpoint', (cb, {breakpoint}) ->
+  gdb.setBreakpoint(breakpoint, cb)
 
 
 ## Control program
-app.post '/continue', (req, res) ->
-  gdb_interaction(
-    ((c)-> gdb.continueExecution(c)),
-    (-> res.send(true))
-  )
+expose_gdb '/continue', (cb) ->
+  gdb.continueExecution(cb)
 
-app.post '/step', (req, res) ->
-  gdb_interaction(
-    ((c)-> gdb.stepIntoLine(c)),
-    (-> res.send(true))
-  )
+expose_gdb '/step', (cb) ->
+  gdb.stepIntoLine(cb)
 
-app.post '/next', (req, res) ->
-  gdb_interaction(
-    ((c)-> gdb.runNextLine(c)),
-    (-> res.send(true))
-  )
+expose_gdb '/next', (cb) ->
+  gdb.runNextLine(cb)
 
-app.post '/finish', (req, res) ->
-  gdb_interaction(
-    ((c)-> gdb.finishFunction(c)),
-    (-> res.send(true))
-  )
+expose_gdb '/finish', (cb) ->
+  gdb.finishFunction(cb)
+
+
+## Expose source code
+# this may be the beginning of something much greater...
+app.use('/source', express.static(os161.source_root))
