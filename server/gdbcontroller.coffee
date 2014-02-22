@@ -1,8 +1,9 @@
 _ = require 'underscore'
 _.str = require 'underscore.string'
 async = require 'async'
+{EventEmitter} = require 'events'
 
-exports.RecordedProcess = class RecordedProcess
+exports.RecordedProcess = class RecordedProcess extends EventEmitter
   constructor: (@proc) ->
     @ipc_history = []
 
@@ -14,6 +15,7 @@ exports.RecordedProcess = class RecordedProcess
     @add_to_rpc_history('stdin', data)
 
   add_to_rpc_history: (from, data) ->
+    @emit '#{from}-data', data
     @ipc_history.push {data, from}
 
   ipcHistoryOn: (chann)->

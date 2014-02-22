@@ -32,12 +32,6 @@ update_program_state = (continuation) ->
     set_program_state(state)
     continuation()
 
-# wait until gdb is ready before opening to http requests
-os161.launch_gdb (_gdb) ->
-  gdb = _gdb
-  update_program_state ->
-    server.listen(3000)
-    console.log "listening on port 3000"
 
 ## Serialize gdb interactions
 # use a queue of gdb interactions
@@ -64,6 +58,11 @@ execute_gdb_interaction = (interaction, callback) ->
   interaction ->
     update_program_state ->
       callback()
+
+# To force the state of the program to be pushed,
+# mock a gdb interaction
+push_prgram_state = ->
+  execute_gdb_interaction ((cb) -> cb())
 
 expose_gdb = (url, interaction) ->
   app.post url, (req, res) ->
@@ -104,3 +103,14 @@ expose_gdb '/proc_input', (cb, {input}) ->
 ## Expose source code
 # this may be the beginning of something much greater...
 app.use('/source', express.static(os161.source_root))
+
+# wait until gdb is ready before opening to http requests
+os161.launch_gdb (_gdb) ->
+  gdb = _gdb
+
+  gdb.debugged_program.on 'data-stdout', push_prgram_state
+  gdb.debugged_program.on 'data-stderr', push_prgram_state
+
+  update_program_state ->
+    server.listen(3000)
+    console.log "listening on port 3000"
