@@ -43,8 +43,14 @@
   <pre>{{app_state.breakpoints}}</pre>
 
   <h3>Process Log</h3>
-  <console log="app_state.proc_history"></console>
+  <console
+    log="app_state.proc_history"
+    sendline="send_gdb_command">
+  </console>
 
   <h3>GDB Log</h3>
-  <console log="app_state.gdb_history"></console>
+  <console
+    log="app_state.gdb_history"
+    sendline="send_proc_input">
+  </console>
 </div>

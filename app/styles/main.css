@@ -49,10 +49,24 @@ pre.console {
 	word-wrap: normal;
 }
 
-.pipe-stdin {
+.console .pipe-stdin {
 	color: blue;
 }
 
-.pipe-stderr {
+.console .pipe-stderr {
 	color: red;
+}
+
+.console .pipe-direct-input {
+	color: lightblue;
+}
+
+.console .console-input-line {
+	display: inline-block;
+	outline: none;
+}
+
+.console .console-input-line:empty {
+	height: 1em;
+	width: 1em;
 }
