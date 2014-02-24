@@ -8,7 +8,9 @@ angular.module('gdbGuiApp')
     # sorry for the weird formatting, but html
     # will show newlines between the pre/spans
     template: '''
-        <div ng-repeat="line in code|splitLines track by $index"
+        <div
+            ng-show="code != null"
+            ng-repeat="line in code|splitLines track by $index"
             class="line selected-{{$index+1==highlight}}">
             <span class="lineno">{{$index+1}}</span>
             <span class="code">{{line}}</span>
