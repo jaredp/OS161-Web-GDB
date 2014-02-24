@@ -1,3 +1,4 @@
+debounce = require('debounce')
 express = require('express')
 app = express()
 app.use(express.json());
@@ -18,8 +19,10 @@ app.get '/proc_state', (req, res) ->
 io.sockets.on 'connection', (socket) ->
   socket.emit('app_state_change', program_state)
 
-push_prgram_state = ->
+max_push_rate = 1#ms
+push_prgram_state = debounce((->
   io.sockets.emit('app_state_change', program_state)
+), max_push_rate)
 
 set_program_state = (state) ->
   program_state = state
