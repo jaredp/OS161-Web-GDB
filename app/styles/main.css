@@ -39,6 +39,26 @@
 	padding-left: 1em;
 }
 
+/* codeviewer */
+
+code-viewer {
+	font-size: 11px;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+code-viewer .lineno {
+	color: grey;
+}
+
+code-viewer .code {
+	white-space: pre;
+	word-wrap: break-word;
+}
+
+code-viewer .selected-true {
+	background-color: lightskyblue;
+}
+
 /* console */
 
 code {

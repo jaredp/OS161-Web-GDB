@@ -19,3 +19,12 @@ angular.module('gdbGuiApp')
 
     $scope.send_proc_input = (input) ->
       $scope.http_post('/proc_input', {input});
+
+    $http.get('/source/kern/main/menu.c')
+      .success (data) ->
+        $scope.selected_frame = {
+          file: {
+            contents: data
+          }
+          line: 694
+        }
