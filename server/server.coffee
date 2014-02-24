@@ -82,14 +82,14 @@ expose_gdb '/add_breakpoint', (cb, {breakpoint}) ->
 expose_gdb '/continue', (cb) ->
   gdb.continueExecution(cb)
 
-expose_gdb '/step', (cb) ->
-  gdb.stepIntoLine(cb)
+expose_gdb '/step', (cb, {frame}) ->
+  gdb.stepIntoLine(frame, cb)
 
-expose_gdb '/next', (cb) ->
-  gdb.runNextLine(cb)
+expose_gdb '/next', (cb, {frame}) ->
+  gdb.runNextLine(frame, cb)
 
-expose_gdb '/finish', (cb) ->
-  gdb.finishFunction(cb)
+expose_gdb '/finish', (cb, {frame}) ->
+  gdb.finishFunction(frame, cb)
 
 
 ## Interact with processes

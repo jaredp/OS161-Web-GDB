@@ -2,11 +2,7 @@
   <div class="header">
     <ul class="nav nav-pills pull-right">
       <li><a ng-click="add_breakpoint()">Add Breakpoint</a></li>
-
       <li><a ng-click="http_post('/continue')">Continue</a></li>
-      <li><a ng-click="http_post('/step')">Into</a></li>
-      <li><a ng-click="http_post('/next')">Next</a></li>
-      <li><a ng-click="http_post('/finish')">Finish</a></li>
     </ul>
     <h3 class="text-muted" id="title">OS 161</h3>
   </div>
@@ -27,8 +23,30 @@
 <div class="infopane">
   <div ng-repeat="stack_frame in app_state.stack">
     <div>
-      <strong>{{stack_frame.func}}</strong>
-      at {{stack_frame.file}}:{{stack_frame.line}}
+      <div class="pull-left">
+        <div><strong>{{stack_frame.func}}</strong></div>
+        <div>{{stack_frame.file}}:{{stack_frame.line}}</div>
+      </div>
+      <div class="pull-right" style="padding-top: 2px">
+        <button class="btn btn-primary"
+          ng-click="http_post('/step', {
+            'frame': stack_frame.frame
+          })">
+          S
+        </button>
+        <button class="btn btn-primary"
+          ng-click="http_post('/next', {
+            'frame': stack_frame.frame
+          })">
+          N
+        </button>
+        <button class="btn btn-primary"
+          ng-click="http_post('/finish', {
+            'frame': stack_frame.frame
+          })">
+          F
+        </button>
+      </div>
     </div>
     <table class="table table-striped">
       <tr ng-repeat="local in stack_frame.locals">

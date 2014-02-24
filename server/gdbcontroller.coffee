@@ -148,14 +148,17 @@ exports.GDB = class GDB extends RecordedProcess
   # Control handling
   ##
   continueExecution: (callback) ->
-    @command 'c', callback
+    @command 'continue', callback
 
-  stepIntoLine: (callback) ->
-    @command 's', callback
+  stepIntoLine: (frame, callback) ->
+    @setFrame frame, =>
+      @command 'step', callback
 
-  runNextLine: (callback) ->
-    @command 'n', callback
+  runNextLine: (frame, callback) ->
+    @setFrame frame, =>
+      @command 'next', callback
 
-  finishFunction: (callback) ->
-    @command 'finish', callback
+  finishFunction: (frame, callback) ->
+    @setFrame frame, =>
+      @command 'finish', callback
 
