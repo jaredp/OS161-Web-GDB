@@ -18,9 +18,12 @@ app.get '/proc_state', (req, res) ->
 io.sockets.on 'connection', (socket) ->
   socket.emit('app_state_change', program_state)
 
+push_prgram_state = ->
+  io.sockets.emit('app_state_change', program_state)
+
 set_program_state = (state) ->
   program_state = state
-  io.sockets.emit('app_state_change', program_state)
+  push_prgram_state()
 
 
 ## Manage gdb
@@ -59,11 +62,6 @@ execute_gdb_interaction = (interaction, callback) ->
     update_program_state ->
       callback()
 
-# To force the state of the program to be pushed,
-# mock a gdb interaction
-push_prgram_state = ->
-  execute_gdb_interaction ((cb) -> cb())
-
 expose_gdb = (url, interaction) ->
   app.post url, (req, res) ->
     gdb_interaction(
@@ -95,9 +93,16 @@ expose_gdb '/finish', (cb) ->
 expose_gdb '/gdb_command', (cb, {command}) ->
   gdb.command(command.trim(), cb)
 
-expose_gdb '/proc_input', (cb, {input}) ->
-  gdb.debugged_program.send(input)
-  cb()
+app.post '/proc_input', (req, res) ->
+  gdb.debugged_program.send(req.body.input)
+  res.send(true)
+
+# A bit hacky, but we need to be able to update
+# proc output even when gdb is blocking
+push_proc_output = ->
+  program_state.proc_history = gdb.debugged_program.ipc_history
+  program_state.gdb_history = gdb.ipc_history
+  push_prgram_state()
 
 
 ## Expose source code
@@ -108,8 +113,8 @@ app.use('/source', express.static(os161.source_root))
 os161.launch_gdb (_gdb) ->
   gdb = _gdb
 
-  gdb.debugged_program.on 'data-stdout', push_prgram_state
-  gdb.debugged_program.on 'data-stderr', push_prgram_state
+  gdb.debugged_program.on 'stdout-data', push_proc_output
+  gdb.debugged_program.on 'stderr-data', push_proc_output
 
   update_program_state ->
     server.listen(3000)

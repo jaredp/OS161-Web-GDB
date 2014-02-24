@@ -15,7 +15,7 @@ exports.RecordedProcess = class RecordedProcess extends EventEmitter
     @add_to_rpc_history('stdin', data)
 
   add_to_rpc_history: (from, data) ->
-    @emit '#{from}-data', data
+    @emit "#{from}-data", data
     @ipc_history.push {data, from}
 
   ipcHistoryOn: (chann)->
