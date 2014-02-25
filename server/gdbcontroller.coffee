@@ -102,7 +102,7 @@ exports.GDB = class GDB extends RecordedProcess
     @command 'info locals', (locals) =>
       vars = []
       for line in locals.trim().split('\n')
-        match = line.match(/^(.+) = (.+)$/)
+        match = line.match(/^([_a-zA-Z][_a-zA-Z0-9]*) = (.+)$/)
         if match?
           [input, variable, value] = match
           vars.push {variable, value}

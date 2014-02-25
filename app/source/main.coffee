@@ -11,7 +11,7 @@ angular.module('gdbGuiApp')
 
     $scope.add_breakpoint = ->
       $scope.http_post('/add_breakpoint', {
-        "breakpoint": "menu_execute"
+        "breakpoint": "cmd_dispatch"
       })
 
     $scope.send_gdb_command = (command) ->
