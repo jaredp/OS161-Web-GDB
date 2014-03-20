@@ -65,6 +65,18 @@ execute_gdb_interaction = (interaction, callback) ->
     update_program_state ->
       callback()
 
+launch_gdb = (callback) ->
+  os161.launch_gdb (_gdb) ->
+    gdb = _gdb
+
+    gdb.debugged_program.on 'stdout-data', push_proc_output
+    gdb.debugged_program.on 'stderr-data', push_proc_output
+
+    update_program_state ->
+      callback()
+
+
+## Template for interacting with gdb over http
 expose_gdb = (url, interaction) ->
   app.post url, (req, res) ->
     gdb_interaction(
@@ -100,10 +112,9 @@ app.post '/proc_input', (req, res) ->
   gdb.debugged_program.send(req.body.input)
   res.send(true)
 
-app.post '/gdb_kill', (req, res) ->
+expose_gdb '/gdb_restart', (cb) ->
   gdb.kill ->
-    console.log "gdb killed"
-    res.send(true)
+    launch_gdb(cb)
 
 # A bit hacky, but we need to be able to update
 # proc output even when gdb is blocking
@@ -118,12 +129,6 @@ push_proc_output = ->
 app.use('/source', express.static(os161.source_root))
 
 # wait until gdb is ready before opening to http requests
-os161.launch_gdb (_gdb) ->
-  gdb = _gdb
-
-  gdb.debugged_program.on 'stdout-data', push_proc_output
-  gdb.debugged_program.on 'stderr-data', push_proc_output
-
-  update_program_state ->
-    server.listen(3000)
-    console.log "listening on port 3000"
+launch_gdb ->
+  server.listen(3000)
+  console.log "listening on port 3000"
