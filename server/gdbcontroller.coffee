@@ -13,6 +13,7 @@ exports.RecordedProcess = class RecordedProcess extends EventEmitter
   kill: (cont) ->
     @proc.once('close', cont)
     @proc.kill('SIGHUP')
+    @exited = yes
 
   send: (data) ->
     @proc.stdin.write data
@@ -77,7 +78,7 @@ exports.GDB = class GDB extends RecordedProcess
         @command 'set pagination off', =>
           callback()
 
-  is_busy: -> @next_handler?
+  is_busy: -> @next_handler? or @exited?
 
   command: (code, callback) ->
     throw new Error "gdb is in the middle of another command" if @is_busy()
