@@ -100,6 +100,11 @@ app.post '/proc_input', (req, res) ->
   gdb.debugged_program.send(req.body.input)
   res.send(true)
 
+app.post '/gdb_kill', (req, res) ->
+  gdb.kill ->
+    console.log "gdb killed"
+    res.send(true)
+
 # A bit hacky, but we need to be able to update
 # proc output even when gdb is blocking
 push_proc_output = ->

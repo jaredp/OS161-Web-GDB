@@ -10,6 +10,10 @@ exports.RecordedProcess = class RecordedProcess extends EventEmitter
     @proc.stdout.on 'data', (data) => @add_to_rpc_history('stdout', data.toString())
     @proc.stderr.on 'data', (data) => @add_to_rpc_history('stderr', data.toString())
 
+  kill: (cont) ->
+    @proc.once('close', cont)
+    @proc.kill('SIGHUP')
+
   send: (data) ->
     @proc.stdin.write data
     @add_to_rpc_history('stdin', data)
@@ -80,6 +84,13 @@ exports.GDB = class GDB extends RecordedProcess
     @next_handler = callback
     @send(code + '\n')
 
+
+  kill: (exited) ->
+    # call the continuation when both gdb and the proc have exited
+    async.parallel [
+      (done) => super(done)
+      (done) => @debugged_program.kill(done)
+    ], exited
 
   ####
   # Stack inspection
