@@ -1,3 +1,4 @@
+async = require('async')
 debounce = require('debounce')
 express = require('express')
 socketio = require('socket.io')
@@ -28,45 +29,22 @@ io.sockets.on 'connection', (socket) ->
   socket.emit('app_state_change', program_state)
 
 max_push_rate = 1#ms
-push_prgram_state = debounce((->
+push_program_state = debounce((->
   io.sockets.emit('app_state_change', program_state)
 ), max_push_rate)
 
-set_program_state = (state) ->
-  program_state = state
-  push_prgram_state()
-
-update_program_state = (continuation) ->
+update_program_state = (callback) ->
   gdb.getProgramState (state) ->
-    set_program_state(state)
-    continuation()
+    program_state = state
+    push_program_state()
+    callback()
 
 
 ## Serialize gdb interactions
-# use a queue of gdb interactions
-# invariant: gdb is_busy() OR gdb_interaction_queue.length == 0
-# design: we're assuming that all interactions with gdb goes
-# through run_gdb_queue.
-gdb_interaction_queue = []
-
-gdb_interaction = (interaction, callback) ->
-  gdb_interaction_queue.push {interaction, callback}
-  run_gdb_queue() unless gdb.is_busy()
-
-run_gdb_queue = ->
-  if gdb_interaction_queue.length > 0
-    next = gdb_interaction_queue.shift()
-    {interaction, callback} = next
-    execute_gdb_interaction interaction, ->
-      callback()
-
-      # repeat until we've exhausted the queue
-      run_gdb_queue()
-
-execute_gdb_interaction = (interaction, callback) ->
-  interaction ->
-    update_program_state ->
-      callback()
+gdb_queue = async.queue (task, done) ->
+    task ->
+      update_program_state ->
+        done()
 
 launch_gdb = (callback) ->
   os161.launch_gdb (_gdb) ->
@@ -82,7 +60,7 @@ launch_gdb = (callback) ->
 ## Template for interacting with gdb over http
 expose_gdb = (url, interaction) ->
   app.post url, (req, res) ->
-    gdb_interaction(
+    gdb_queue.push(
       (cb) -> interaction(cb, req.body),
       (-> res.send(true))
     )
@@ -124,7 +102,7 @@ expose_gdb '/gdb_restart', (cb) ->
 push_proc_output = ->
   program_state.proc_history = gdb.debugged_program.ipc_history
   program_state.gdb_history = gdb.ipc_history
-  push_prgram_state()
+  push_program_state()
 
 
 ## Expose source code
