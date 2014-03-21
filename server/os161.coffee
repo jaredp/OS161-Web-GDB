@@ -45,4 +45,8 @@ spawnGDB = (callback) ->
     gdb_proc = spawn('os161-gdb', ['kernel'], {cwd: kernel_root})
     gdb = new OS161_GDB(gdb_proc, kernel, -> callback(gdb))
 
-exports.launch_gdb = spawnGDB
+exports.launch_gdb = (callback) ->
+  spawnGDB (gdb) ->
+    gdb.setBreakpoint 'panic', ->
+      gdb.setBreakpoint 'badassert', ->
+        callback(gdb)
