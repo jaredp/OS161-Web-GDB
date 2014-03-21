@@ -1,18 +1,26 @@
 debounce = require('debounce')
 express = require('express')
+socketio = require('socket.io')
+os161 = require('./os161.coffee')
+
+
+## Server configuration
 app = express()
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.static(__dirname + '/../app'))
 server = require('http').createServer(app)
-io = require('socket.io').listen(server)
-io.set 'log level', 0
+io = socketio.listen(server)
+io.set('log level', 0)
 
 
-## Expose program information
+## program global state
+gdb = null
 program_state = {}
 
+
+## Expose state information
 app.get '/proc_state', (req, res) ->
   res.send(program_state)
 
@@ -27,11 +35,6 @@ push_prgram_state = debounce((->
 set_program_state = (state) ->
   program_state = state
   push_prgram_state()
-
-
-## Manage gdb
-os161 = require './os161.coffee'
-gdb = null
 
 update_program_state = (continuation) ->
   gdb.getProgramState (state) ->
