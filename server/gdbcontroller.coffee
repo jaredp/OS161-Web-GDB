@@ -29,15 +29,9 @@ exports.RecordedProcess = class RecordedProcess extends EventEmitter
 
 ###
 Design:
--One command at a time
+-One command at a time.  It's up to caller to make this guarantee.
 -Read from gdb.stdout until propmt
 -Emit output between prompts as results of last command
-
-Concerns:
--What happens if we get a prompt and then more?
--What happens if we want to send a command while another one is running?
-  -we should buffer it, run next
-  -throw for now
 ###
 
 exports.GDB = class GDB extends RecordedProcess
@@ -78,10 +72,10 @@ exports.GDB = class GDB extends RecordedProcess
         @command 'set pagination off', =>
           callback()
 
-  is_busy: -> @next_handler? or @exited?
-
   command: (code, callback) ->
-    throw new Error "gdb is in the middle of another command" if @is_busy()
+    throw new Error "gdb is in the middle of another command" if @next_handler?
+    throw new Error "gdb has already exited" if @exited?
+
     @next_handler = callback
     @send(code + '\n')
 
